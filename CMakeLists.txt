@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 2.6)
-
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 # Set a default build type if none was specified
 if(NOT CMAKE_BUILD_TYPE)
   message(STATUS "Setting build type to 'Release' as none was specified.")
@@ -23,6 +25,12 @@ set(CMAKE_CXX_FLAGS "--std=c++11")
 set(CMAKE_CXX_FLAGS_DEBUG "-O0 -ggdb -g")
 set(CMAKE_CXX_FLAGS_RELEASE "-g -ggdb -Ofast -fstrict-aliasing -DNDEBUG -march=native")
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-g -ggdb -Ofast -fstrict-aliasing -march=native")
+
+add_executable(mod_ri-build mod_ri-build.cpp)
+TARGET_LINK_LIBRARIES(mod_ri-build sdsl)
+TARGET_LINK_LIBRARIES(mod_ri-build divsufsort)
+TARGET_LINK_LIBRARIES(mod_ri-build divsufsort64)
+
 
 add_executable(ri-build ri-build.cpp)
 TARGET_LINK_LIBRARIES(ri-build sdsl)
