@@ -20,7 +20,11 @@ LINK_DIRECTORIES(~/lib) #SDSL lib are here
 
 message("Building in ${CMAKE_BUILD_TYPE} mode")
 
-set(CMAKE_CXX_FLAGS "--std=c++11")
+
+if(CPP_STATIC)
+set(CMAKE_CXX_FLAGS "-static")
+endif(CPP_STATIC)
+
 
 set(CMAKE_CXX_FLAGS_DEBUG "-O0 -ggdb -g")
 set(CMAKE_CXX_FLAGS_RELEASE "-g -ggdb -Ofast -fstrict-aliasing -DNDEBUG -march=native")
