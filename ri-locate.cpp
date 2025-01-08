@@ -104,7 +104,6 @@ void locate(std::ifstream& in, string patterns){
 
 	idx.load(in);
 
-	auto t2 = high_resolution_clock::now();
 
 	cout << "searching patterns ... " << endl;
 	ifstream ifs(patterns);
@@ -121,6 +120,12 @@ void locate(std::ifstream& in, string patterns){
 	uint last_perc = 0;
 
 	ulint occ_tot=0;
+
+
+	std::vector<uint64_t> backward_search_time_vector;
+	std::vector<uint64_t> computing_sa_time_vector;
+
+	auto t2 = high_resolution_clock::now();
 
 	//extract patterns from file and search them in the index
 	for(ulint i=0;i<n;++i){
@@ -141,7 +146,17 @@ void locate(std::ifstream& in, string patterns){
 
 		//cout << "locating " << idx.occ(p) << " occurrences of "<< p << " ... " << flush;
 
-		auto OCC = idx.locate_all(p);	//occurrences
+		auto t3 = high_resolution_clock::now();
+		auto res = idx.count_and_get_occ(p);
+		auto t4 = high_resolution_clock::now();
+		auto OCC = idx.locate_all(res);	//occurrences
+		auto t5 = high_resolution_clock::now();
+
+
+		uint64_t backward_search_time = std::chrono::duration_cast<std::chrono::nanoseconds>(t4 - t3).count();
+		uint64_t computing_sa_time = std::chrono::duration_cast<std::chrono::nanoseconds>(t5 - t4).count();
+		backward_search_time_vector.push_back(backward_search_time);
+		computing_sa_time_vector.push_back(computing_sa_time);
 
 		if(ofile.compare(string())!=0){
 
@@ -197,21 +212,40 @@ void locate(std::ifstream& in, string patterns){
 
 	ifs.close();
 
-	auto t3 = high_resolution_clock::now();
+	//auto t3 = high_resolution_clock::now();
 
 	//printRSSstat();
 
 	uint64_t load = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count();
 	cout << "Load time : " << load << " milliseconds" << endl;
 
-	uint64_t search = std::chrono::duration_cast<std::chrono::milliseconds>(t3 - t2).count();
+    uint64_t _total_backward_search_time = std::reduce(std::begin(backward_search_time_vector), std::end(backward_search_time_vector));
+    uint64_t _average_backward_search_time = _total_backward_search_time / backward_search_time_vector.size();
+    std::cout << "Total backward search time" << ": \t\t\t\t\t" << (_total_backward_search_time/1000) << " " << "microseconds" << std::endl;
+    std::cout << "\t" << "Average: \t\t\t\t\t" << (_average_backward_search_time/1000) << " " << "microseconds" << std::endl;
+
+    uint64_t _total_computing_sa_time = std::reduce(std::begin(computing_sa_time_vector), std::end(computing_sa_time_vector));
+    uint64_t _average_computing_sa_time = _total_computing_sa_time / computing_sa_time_vector.size();
+    std::cout << "Total computing sa time" << ": \t\t\t\t\t" << (_total_computing_sa_time/1000) << " " << "microseconds" << std::endl;
+    std::cout << "\t" << "Average: \t\t\t\t\t" << (_average_computing_sa_time/1000) << " " << "microseconds" << std::endl;
+
+	uint64_t  _total_search_time = _total_backward_search_time + _total_computing_sa_time;
+    uint64_t _average_search_time = _total_backward_search_time / computing_sa_time_vector.size();
+    std::cout << "Total search time" << ": \t\t\t\t\t" << (_total_search_time/1000) << " " << "microseconds" << std::endl;
+    std::cout << "\t" << "Average: \t\t\t\t\t" << (_average_search_time/1000) << " " << "microseconds" << std::endl;
+
+
+
+
 	cout << "number of patterns n = " << n << endl;
 	cout << "pattern length m = " << m << endl;
 	cout << "total number of occurrences  occ_t = " << occ_tot << endl;
 
-	cout << "Total time : " << search << " milliseconds" << endl;
-	cout << "Search time : " << (double)search/n << " milliseconds/pattern (total: " << n << " patterns)" << endl;
-	cout << "Search time : " << (double)search/occ_tot << " milliseconds/occurrence (total: " << occ_tot << " occurrences)" << endl;
+	//uint64_t search = std::chrono::duration_cast<std::chrono::milliseconds>(t3 - t2).count();
+
+	//cout << "Total time : " << search << " milliseconds" << endl;
+	//cout << "Search time : " << (double)search/n << " milliseconds/pattern (total: " << n << " patterns)" << endl;
+	//cout << "Search time : " << (double)search/occ_tot << " milliseconds/occurrence (total: " << occ_tot << " occurrences)" << endl;
 
 }
 

@@ -421,6 +421,32 @@ namespace ri
 		 * }
 		 */
 
+		vector<ulint> locate_all(const pair<range_t, ulint> &res){
+			vector<ulint> OCC;
+
+			ulint L = std::get<0>(res).first;
+			ulint R = std::get<0>(res).second;
+			ulint k = std::get<1>(res); // SA[R]
+
+			ulint n_occ = R >= L ? (R - L) + 1 : 0;
+
+			if (n_occ > 0)
+			{
+
+				OCC.push_back(k);
+
+				for (ulint i = 1; i < n_occ; ++i)
+				{
+
+					k = Phi(k);
+					OCC.push_back(k);
+				}
+			}
+
+			return OCC;
+		}
+
+
 		/*
 		 * locate all occurrences of P and return them in an array
 		 * (space consuming if result is big).
@@ -577,9 +603,7 @@ namespace ri
 
 			return tot_bytes;
 		}
-
-	private:
-		/*
+/*
 		 * returns <<l,r>, SA[r] >, where l,r are the inclusive ranges of the pattern P. If P does not occur, then l>r
 		 *
 		 * returns <range, j,k>
@@ -649,6 +673,8 @@ namespace ri
 
 			return {range, k};
 		}
+	private:
+		
 
 		/*
 		 * returns a triple containing BWT of input string
