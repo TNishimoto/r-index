@@ -235,7 +235,7 @@ void locate(std::ifstream& in, string patterns){
     std::cout << "\t" << "Average: \t\t\t\t\t" << (_average_computing_sa_time/1000) << " " << "microseconds" << std::endl;
 
 	uint64_t  _total_search_time = _total_backward_search_time + _total_computing_sa_time;
-    uint64_t _average_search_time = _total_backward_search_time / computing_sa_time_vector.size();
+    uint64_t _average_search_time = _total_search_time / computing_sa_time_vector.size();
     std::cout << "Total search time" << ": \t\t\t\t\t" << (_total_search_time/1000) << " " << "microseconds" << std::endl;
     std::cout << "\t" << "Average: \t\t\t\t\t" << (_average_search_time/1000) << " " << "microseconds" << std::endl;
 
