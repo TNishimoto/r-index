@@ -219,6 +219,11 @@ void locate(std::ifstream& in, string patterns){
 	uint64_t load = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count();
 	cout << "Load time : " << load << " milliseconds" << endl;
 
+	for(uint64_t i = 0; i < backward_search_time_vector.size();i++){
+		std::cout << "LOCATE, " << i << ", backward search (nanoseconds), " << backward_search_time_vector[i] << ", computing sa (nanoseconds), " << computing_sa_time_vector[i]  << std::endl;
+	}
+
+
     uint64_t _total_backward_search_time = std::reduce(std::begin(backward_search_time_vector), std::end(backward_search_time_vector));
     uint64_t _average_backward_search_time = _total_backward_search_time / backward_search_time_vector.size();
     std::cout << "Total backward search time" << ": \t\t\t\t\t" << (_total_backward_search_time/1000) << " " << "microseconds" << std::endl;
@@ -233,6 +238,8 @@ void locate(std::ifstream& in, string patterns){
     uint64_t _average_search_time = _total_backward_search_time / computing_sa_time_vector.size();
     std::cout << "Total search time" << ": \t\t\t\t\t" << (_total_search_time/1000) << " " << "microseconds" << std::endl;
     std::cout << "\t" << "Average: \t\t\t\t\t" << (_average_search_time/1000) << " " << "microseconds" << std::endl;
+
+
 
 
 
@@ -261,6 +268,8 @@ int main(int argc, char** argv){
 
 	string idx_file(argv[ptr]);
 	string patt_file(argv[ptr+1]);
+
+	std::cout << "file: " << argv[ptr+1] << std::endl;
 
 	std::ifstream in(idx_file);
 
